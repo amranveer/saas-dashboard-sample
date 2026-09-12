@@ -3,6 +3,7 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import CommandMenu from "@/components/CommandMenu";
+import GlobalToast from "@/components/GlobalToast";
 
 export const metadata: Metadata = {
   title: "Nexus | SaaS Dashboard",
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased flex h-screen overflow-hidden bg-[#0A0A0A]">
         <CommandMenu />
+        <GlobalToast />
         <Sidebar />
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <Header />

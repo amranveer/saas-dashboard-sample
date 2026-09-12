@@ -3,6 +3,7 @@
 import { Download, Filter, Search, X, Code2 } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAppStore } from "@/store/useAppStore";
 
 const tableData = [
   { id: "req_1a2b3c", endpoint: "/api/v1/models/generate", method: "POST", status: 200, latency: "145ms", cost: "$0.02", date: "Oct 24, 14:32:01", payload: '{\n  "model": "nexus-v2",\n  "prompt": "Generate...",\n  "max_tokens": 512\n}' },
@@ -19,6 +20,7 @@ export default function AnalyticsPage() {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<keyof typeof tableData[0]>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const setToast = useAppStore((state) => state.setToast);
 
   const handleSort = (key: keyof typeof tableData[0]) => {
     if (sortKey === key) {
@@ -27,6 +29,10 @@ export default function AnalyticsPage() {
       setSortKey(key);
       setSortOrder("desc");
     }
+  };
+
+  const handleExport = () => {
+    setToast("Generating CSV report... Check your downloads.", "info");
   };
 
   const filteredData = tableData
@@ -49,7 +55,7 @@ export default function AnalyticsPage() {
           <h1 className="text-2xl font-bold tracking-tight text-white">API Request Logs</h1>
           <p className="text-[#A3A3A3] text-sm">Detailed telemetry and tracing for all incoming API requests.</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-[#141414] border border-[#262626] text-white text-sm font-medium rounded-md hover:bg-[#171717] transition-colors">
+        <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2 bg-[#141414] border border-[#262626] text-white text-sm font-medium rounded-md hover:bg-[#171717] transition-colors">
           <Download className="w-4 h-4" />
           Export CSV
         </button>

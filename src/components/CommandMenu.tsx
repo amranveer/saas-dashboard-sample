@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 const actions = [
   { id: "home", name: "Go to Dashboard", icon: LayoutDashboard, route: "/" },
   { id: "analytics", name: "View Analytics", icon: Activity, route: "/analytics" },
+  { id: "usage", name: "Usage & Limits", icon: Activity, route: "/usage" },
   { id: "customers", name: "Manage Customers", icon: Users, route: "/customers" },
   { id: "settings", name: "Account Settings", icon: Settings, route: "/settings" },
   { id: "billing", name: "Billing & Invoices", icon: CreditCard, route: "/settings" },

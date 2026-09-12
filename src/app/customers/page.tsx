@@ -1,9 +1,11 @@
 "use client";
 
-import { Search, Filter, MoreHorizontal, Mail, MapPin } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Mail, X } from "lucide-react";
 import { useState } from "react";
+import { useAppStore } from "@/store/useAppStore";
+import { motion, AnimatePresence } from "framer-motion";
 
-const customersData = [
+const initialCustomers = [
   { id: "cus_1", name: "Acme Corp", email: "billing@acmecorp.com", status: "Active", spend: "$1,245.00", location: "San Francisco, CA" },
   { id: "cus_2", name: "Globex Inc", email: "accounts@globex.com", status: "Past Due", spend: "$850.00", location: "New York, NY" },
   { id: "cus_3", name: "Soylent", email: "finance@soylent.io", status: "Active", spend: "$4,320.00", location: "London, UK" },
@@ -12,9 +14,28 @@ const customersData = [
 ];
 
 export default function CustomersPage() {
+  const [customersData, setCustomersData] = useState(initialCustomers);
   const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const setToast = useAppStore((state) => state.setToast);
 
   const filteredCustomers = customersData.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase()));
+
+  const handleAddCustomer = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newCustomer = {
+      id: `cus_${Date.now()}`,
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      status: "Active",
+      spend: "$0.00",
+      location: "Unknown",
+    };
+    setCustomersData([newCustomer, ...customersData]);
+    setIsModalOpen(false);
+    setToast(`${newCustomer.name} has been added successfully`, "success");
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -23,7 +44,7 @@ export default function CustomersPage() {
           <h1 className="text-2xl font-bold tracking-tight text-white">Customers</h1>
           <p className="text-[#A3A3A3] text-sm">Manage your active subscriptions and accounts.</p>
         </div>
-        <button className="px-4 py-2 bg-white text-black text-sm font-medium rounded-md hover:bg-gray-200 transition-colors">
+        <button onClick={() => setIsModalOpen(true)} className="px-4 py-2 bg-white text-black text-sm font-medium rounded-md hover:bg-gray-200 transition-colors">
           Add Customer
         </button>
       </div>
@@ -90,6 +111,45 @@ export default function CustomersPage() {
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-[#141414] border border-[#262626] rounded-xl shadow-2xl z-50 p-6"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-white">Add New Customer</h2>
+                <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={handleAddCustomer} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400">Company / Full Name</label>
+                  <input name="name" required type="text" placeholder="e.g. Acme Corp" className="w-full bg-[#0A0A0A] border border-[#262626] rounded-md py-2 px-3 text-sm text-white focus:outline-none focus:border-gray-500" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-400">Email Address</label>
+                  <input name="email" required type="email" placeholder="billing@example.com" className="w-full bg-[#0A0A0A] border border-[#262626] rounded-md py-2 px-3 text-sm text-white focus:outline-none focus:border-gray-500" />
+                </div>
+                <div className="pt-4 flex justify-end gap-3">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border border-[#262626] text-white text-sm font-medium rounded-md hover:bg-[#171717] transition-colors">Cancel</button>
+                  <button type="submit" className="px-4 py-2 bg-white text-black text-sm font-medium rounded-md hover:bg-gray-200 transition-colors">Save Customer</button>
+                </div>
+              </form>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

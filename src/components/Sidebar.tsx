@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Activity, Settings, HelpCircle, Triangle } from "lucide-react";
+import { LayoutDashboard, Users, Activity, Settings, HelpCircle, Triangle, BarChart2 } from "lucide-react";
 
 const navigation = [
   { name: "Overview", href: "/", icon: LayoutDashboard },
   { name: "Analytics", href: "/analytics", icon: Activity },
+  { name: "Usage & Limits", href: "/usage", icon: BarChart2 },
   { name: "Customers", href: "/customers", icon: Users },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
